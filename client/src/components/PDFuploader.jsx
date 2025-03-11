@@ -27,7 +27,7 @@ const PDFUploader = ({ onExtractedText }) => {
 
     try {
       const { data } = await axios.post(
-        "http://localhost:5000/upload",
+        "https://mock-mate-api.vercel.app/upload",
         formData,
         {
           onUploadProgress: (progressEvent) => {
