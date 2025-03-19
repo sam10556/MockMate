@@ -2,13 +2,12 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import axios from "axios";
 import Markdown from "react-markdown";
+import { motion } from "framer-motion";
 
 const QuizSession = () => {
   const [questions, setQuestions] = useState([]);
-  const [chatHistory, setChatHistory] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isStarted, setIsStarted] = useState(false);
-  const [feedback, setFeedback] = useState(null);
   const [correctAnswers, setCorrectAnswers] = useState({});
   const [userResponses, setUserResponses] = useState([]);
   const navigate = useNavigate();
@@ -16,9 +15,11 @@ const QuizSession = () => {
 
   const generateExamQuestions = async () => {
     setLoading(true);
+    setIsStarted(true);
+
     try {
       const response = await axios.post(
-        "http://localhost:5000/generate-multiplechoice-questions",
+        "https://mock-mate-api.vercel.app/generate-multiplechoice-questions",
         { resumeText }
       );
 
@@ -49,7 +50,6 @@ const QuizSession = () => {
       });
 
       setQuestions(extractedQuestions);
-      setIsStarted(true);
       setCorrectAnswers(extractedAnswers);
       setUserResponses(Array(extractedQuestions.length).fill(""));
     } catch (error) {
@@ -64,7 +64,7 @@ const QuizSession = () => {
     const results = questions.map((q, index) => {
       const userAnswer = userResponses[index]?.trim().toLowerCase();
       const correctAnswer = correctAnswers[index]?.trim().toLowerCase();
-      const isCorrect = userAnswer.slice(0,1) === correctAnswer;
+      const isCorrect = userAnswer.slice(0, 1) === correctAnswer;
       if (isCorrect) {
         score++;
       }
@@ -100,7 +100,13 @@ const QuizSession = () => {
             </h2>
 
             {loading ? (
-              <p>Loading questions...</p>
+              <motion.div
+                className="flex justify-center items-center h-40"
+                animate={{ opacity: [0.5, 1, 0.5] }}
+                transition={{ duration: 1.5, repeat: Infinity }}
+              >
+                <div className="w-10 h-10 bg-blue-500 rounded-full animate-ping"></div>
+              </motion.div>
             ) : (
               questions.map((q, index) => (
                 <div
@@ -134,7 +140,7 @@ const QuizSession = () => {
 
             <button
               onClick={handleSubmit}
-              disabled={userResponses.includes("")} // Prevents submission if any question is unanswered
+              disabled={userResponses.includes("") || loading}
               className={`mt-4 w-full py-2 px-4 rounded-xl font-semibold text-white ${
                 userResponses.includes("")
                   ? "bg-gray-400 cursor-not-allowed"
