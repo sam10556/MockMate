@@ -23,7 +23,7 @@ const ChatBot = ({ resumeText }) => {
     setLoading(true);
     try {
       const response = await axios.post(
-        "http://localhost:5000/generate-interview-questions",
+        "https://mock-mate-api.vercel.app/generate-interview-questions",
         { resumeText }
       );
 
