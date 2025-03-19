@@ -54,7 +54,7 @@ const ChatBot = ({ resumeText }) => {
     setLoading(true);
     try {
       const response = await axios.post(
-        "http://localhost:5000/generate-multiplechoice-questions",
+        "https://mock-mate-api.vercel.app/generate-multiplechoice-questions",
         { resumeText }
       );
   
@@ -112,7 +112,7 @@ const ChatBot = ({ resumeText }) => {
     setLoading(true);
     try {
       const response = await axios.post(
-        "http://localhost:5000/analyze-resume",
+        "https://mock-mate-api.vercel.app/analyze-resume",
         { resumeText }
       );
       setResumeAnalysis(response.data.analysis);
@@ -130,7 +130,7 @@ const ChatBot = ({ resumeText }) => {
     setLoading(true);
     try {
       const response = await axios.post(
-        "http://localhost:5000/evaluate-answer",
+        "https://mock-mate-api.vercel.app/evaluate-answer",
         {
           question: questions[index],
           answer,
@@ -178,7 +178,7 @@ const ChatBot = ({ resumeText }) => {
     setIsFinalSubmitted(true);
     try {
       const response = await axios.post(
-        "http://localhost:5000/final-feedback",
+        "https://mock-mate-api.vercel.app/final-feedback",
         {
           chatHistory: updatedChatHistory, // Ensure latest history is sent
         }
