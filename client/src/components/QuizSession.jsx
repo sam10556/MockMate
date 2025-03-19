@@ -18,7 +18,7 @@ const QuizSession = () => {
     setLoading(true);
     try {
       const response = await axios.post(
-        "https://mock-mate-api.vercel.app/generate-multiplechoice-questions",
+        "http://localhost:5000/generate-multiplechoice-questions",
         { resumeText }
       );
 
@@ -64,8 +64,7 @@ const QuizSession = () => {
     const results = questions.map((q, index) => {
       const userAnswer = userResponses[index]?.trim().toLowerCase();
       const correctAnswer = correctAnswers[index]?.trim().toLowerCase();
-      const isCorrect = userAnswer === correctAnswer;
-
+      const isCorrect = userAnswer.slice(0,1) === correctAnswer;
       if (isCorrect) {
         score++;
       }

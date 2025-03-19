@@ -36,7 +36,7 @@ app.post("/generate-interview-questions", async (req, res) => {
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
     const prompt = `Resume Text :""${resumeText}""
-    List a 2 interview questions based on the resume text using this JSON schema:
+    List a few interview questions based on the resume text using this JSON schema:
 
     Questions = {'questions': string}
     Return: Array<Questions>`;
@@ -70,7 +70,7 @@ app.post("/generate-multiplechoice-questions", async (req, res) => {
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
     const textLength = resumeText.length;
-    const questionCount = textLength < 1000 ? 10 : textLength < 2500 ? 15 : 20;
+    const questionCount = textLength < 2500 ? 10 : textLength < 5000 ? 15 : 20;
 
     const prompt = `
   Analyze the following document and generate ${questionCount} multiple-choice questions based on the key topics.
