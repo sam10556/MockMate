@@ -20,42 +20,11 @@ export default function InterviewBot() {
   const navigate = useNavigate();
   const resumeText = localStorage.getItem("resumeText") || "";
 
-  const generateInterviewQuestion = async () => {
-    setLoading(true);
-    try {
-      const response = await axios.post(
-        "http://localhost:5000/generate-interview-questions",
-        { resumeText }
-      );
-
-      if (!response.data || !response.data.questions) {
-        throw new Error(
-          "Invalid response format: 'questions' field is missing"
-        );
-      }
-
-      // Extract only the actual questions from the response
-      const extractedQuestions = response.data.questions
-        .filter(
-          (q, index) => index > 0 && index < response.data.questions.length - 1
-        ) // Remove first and last items
-        .map((q) => q.replace(/\*\*(.*?)\*\*/, "$1")) // Remove markdown bold formatting
-        .map((q) => q.split("**")[0].trim()); // Ensure only the question is kept
-
-      setQuestions(extractedQuestions);
-      setCurrentQuestionIndex(0);
-    } catch (error) {
-      console.error("Error fetching interview question:", error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const analyzeResume = async () => {
     setLoading(true);
     try {
       const response = await axios.post(
-        "http://localhost:5000/analyze-resume",
+        "https://mock-mate-api.vercel.app/analyze-resume",
         { resumeText }
       );
       if (response.data?.analysis) {

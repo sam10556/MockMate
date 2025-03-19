@@ -19,7 +19,7 @@ const InterviewSession = () => {
     setLoading(true);
     try {
       const response = await axios.post(
-        "http://localhost:5000/generate-interview-questions",
+        "https://mock-mate-api.vercel.app/generate-interview-questions",
         { resumeText }
       );
 
@@ -57,7 +57,7 @@ const InterviewSession = () => {
     setLoading(true);
     try {
       const response = await axios.post(
-        "http://localhost:5000/evaluate-answer",
+        "https://mock-mate-api.vercel.app/evaluate-answer",
         {
           question: questions[currentQuestionIndex],
           answer: currentAnswer,
@@ -101,7 +101,7 @@ const InterviewSession = () => {
     setIsFinalSubmitted(true);
     try {
       const response = await axios.post(
-        "http://localhost:5000/final-feedback",
+        "https://mock-mate-api.vercel.app/final-feedback",
         {
           chatHistory: updatedChatHistory,
         }

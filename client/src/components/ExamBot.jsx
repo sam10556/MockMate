@@ -68,7 +68,7 @@ export default function ExamBot() {
   const makesNotes = async () => {
     setLoading(true);
     try {
-      const response = await axios.post("http://localhost:5000/make-notes", {
+      const response = await axios.post("https://mock-mate-api.vercel.app/make-notes", {
         resumeText,
       });
       if (response.data?.notes) {

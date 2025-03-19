@@ -70,11 +70,11 @@ app.post("/generate-multiplechoice-questions", async (req, res) => {
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
     const textLength = resumeText.length;
-    const questionCount = textLength < 500 ? 8 : textLength < 1500 ? 15 : 20;
+    const questionCount = textLength < 1000 ? 10 : textLength < 2500 ? 15 : 20;
 
     const prompt = `
-      Analyze the following resume and generate ${questionCount} multiple-choice questions based on the candidate’s skills, experience, and industry.
-      Ensure that the questions are diverse and relevant to the candidate's profile.
+  Analyze the following document and generate ${questionCount} multiple-choice questions based on the key topics.
+  Ensure that the questions cover different aspects of the document and are not repetitive.
     
       Return the questions in this structured JSON format:
       [
