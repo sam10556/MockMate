@@ -57,60 +57,32 @@ const ChatBot = ({ resumeText }) => {
         "http://localhost:5000/generate-multiplechoice-questions",
         { resumeText }
       );
-
+  
       if (!response.data || !response.data.questions) {
-        throw new Error(
-          "Invalid response format: 'questions' field is missing"
-        );
+        throw new Error("Invalid response format: 'questions' field is missing");
       }
-
-      const extractedQuestions = [];
+  
+      // The response may be wrapped in a code block, so we need to clean it
+      let rawText = response.data.questions.join("\n"); // Convert array back to string
+      rawText = rawText.replace(/```json|```/g, "").trim(); // Remove ```json and ``` markers
+  
+      let questionsData;
+      try {
+        questionsData = JSON.parse(rawText); // Parse the cleaned JSON string
+      } catch (error) {
+        throw new Error("Failed to parse AI response as JSON.");
+      }
+  
+      const extractedQuestions = questionsData.map((q) => ({
+        question: q.question,
+        options: q.options,
+      }));
+  
       const extractedAnswers = {};
-
-      const questionList = response.data.questions;
-      console.log(questionList);
-
-      let currentQuestion = null;
-      let options = [];
-      let currentAnswer = null;
-
-      for (let i = 0; i < questionList.length; i++) {
-        const line = questionList[i].trim();
-
-        if (line.match(/^\*\*\d+\.\sQuestion:\*\*/)) {
-          // Store previous question if it exists
-          if (currentQuestion && options.length === 4 && currentAnswer) {
-            extractedQuestions.push({
-              question: currentQuestion,
-              options: [...options],
-            });
-            extractedAnswers[extractedQuestions.length - 1] = currentAnswer;
-          }
-          // Start new question
-          currentQuestion = line.replace(/^\*\*\d+\.\sQuestion:\*\*\s*/, "");
-          options = [];
-          currentAnswer = null;
-        } else if (line === "**Options:**") {
-          // Skip this line, options start after it
-          continue;
-        } else if (line.match(/^[A-D]\.\s/)) {
-          // Add option to list
-          options.push(line);
-        } else if (line.match(/^\*\*Answer:\s*([A-D])\*\*$/)) {
-          // Capture answer
-          currentAnswer = line.match(/^\*\*Answer:\s*([A-D])\*\*$/)[1];
-        }
-      }
-
-      // Store last question
-      if (currentQuestion && options.length === 4 && currentAnswer) {
-        extractedQuestions.push({
-          question: currentQuestion,
-          options: [...options],
-        });
-        extractedAnswers[extractedQuestions.length - 1] = currentAnswer;
-      }
-
+      questionsData.forEach((q, index) => {
+        extractedAnswers[index] = q.answer;
+      });
+  
       setQuestions(extractedQuestions);
       setCorrectAnswers(extractedAnswers);
       setUserResponses(Array(extractedQuestions.length).fill(""));
@@ -119,7 +91,7 @@ const ChatBot = ({ resumeText }) => {
     } finally {
       setLoading(false);
     }
-  };
+  };  
 
   const mcqFeedBack = () => {
     let score = 0;

@@ -2,7 +2,15 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Home from "./components/Home";
 import Feedback from "./components/Feedback";
 import InterviewPage from "./components/InterviewPage";
-import QuizPage from "./components/QuizPage";
+import ExamPage from "./components/ExamPage";
+import Selection from "./components/Selection";
+import InterviewBot from "./components/InterviewBot";
+import AnalyzeResume from "./components/AnalyzeResume";
+import InterviewSession from "./components/InterviewSession";
+import Notes from "./components/Notes";
+import ExamBot from "./components/ExamBot";
+import QuizSession from "./components/QuizSession";
+import QuizResults from "./components/QuizResult";
 
 function App() {
   return (
@@ -10,9 +18,17 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/feedback" element={<Feedback />} />
+          <Route path="/selection" element={<Selection />} />
+          <Route path="interview/feedback" element={<Feedback />} />
           <Route path="/interview" element={<InterviewPage />} />
-          <Route path="/quiz" element={<QuizPage />} />
+          <Route path="/interview/bot" element={<InterviewBot />} />
+          <Route path="/interview/bot/resume" element={<AnalyzeResume />} />
+          <Route path="/interview/start" element={<InterviewSession />} />
+          <Route path="/exam" element={<ExamPage />} />
+          <Route path="/exam/bot" element={<ExamBot />} />
+          <Route path="/exam/bot/notes" element={<Notes />} />
+          <Route path="/exam/bot/start" element={<QuizSession />} />
+          <Route path="/exam/result" element={<QuizResults />} />
         </Routes>
       </BrowserRouter>
     </>

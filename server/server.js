@@ -35,10 +35,11 @@ app.post("/generate-interview-questions", async (req, res) => {
   try {
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-    let prompt = `\n${resumeText}\n`;
+    const prompt = `Resume Text :""${resumeText}""
+    List a 2 interview questions based on the resume text using this JSON schema:
 
-    prompt +=
-      "Generate 5 interview question based on the candidate's skills and experience.";
+    Questions = {'questions': string}
+    Return: Array<Questions>`;
 
     const response = await model.generateContent(prompt);
     const textResponse =
@@ -68,14 +69,25 @@ app.post("/generate-multiplechoice-questions", async (req, res) => {
   try {
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-    let prompt = `Analyze this resume:\n${resumeText}\n`;
-    prompt += `Based on the candidate’s skills and experience, generate **10 multiple-choice questions** in the following structured format:
+    const textLength = resumeText.length;
+    const questionCount = textLength < 500 ? 8 : textLength < 1500 ? 15 : 20;
 
-1. **Question**: Clearly state the question.
-2. **Options**: Provide four options labeled A, B, C, and D.
-3. **Answer**: Indicate the correct answer using the format: **Answer: X** (where X is A, B, C, or D).
-
-Ensure that the output is well-organized and follows this format for each question.`;
+    const prompt = `
+      Analyze the following resume and generate ${questionCount} multiple-choice questions based on the candidate’s skills, experience, and industry.
+      Ensure that the questions are diverse and relevant to the candidate's profile.
+    
+      Return the questions in this structured JSON format:
+      [
+        {
+          "question": "What is the candidate's primary programming language?",
+          "options": ["A. Java", "B. Python", "C. JavaScript", "D. C++"],
+          "answer": "B"
+        }
+      ]
+    
+      Resume Text:
+      """${resumeText}"""
+    `;
 
     const response = await model.generateContent(prompt);
     const textResponse =
@@ -194,6 +206,33 @@ app.post("/final-feedback", async (req, res) => {
       error: "Error generating final feedback",
       details: error.message,
     });
+  }
+});
+
+app.post("/make-notes", async (req, res) => {
+  const { resumeText } = req.body;
+  if (!resumeText) {
+    return res.status(400).json({ error: "Document text is required" });
+  }
+  try {
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    let prompt = `Make short but important notes of this document text ${resumeText}. make points-clean and clear so it can be understood easily`;
+
+    const response = await model.generateContent(prompt);
+
+    const textResponse =
+      response?.response?.candidates?.[0]?.content?.parts?.[0]?.text;
+
+    if (!textResponse) {
+      throw new Error("AI response is empty or malformed.");
+    }
+
+    res.json({ notes: textResponse });
+  } catch (error) {
+    console.error("Error generating notes:", error);
+    res
+      .status(500)
+      .json({ error: "Error generating notes", details: error.message });
   }
 });
 

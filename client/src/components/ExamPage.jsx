@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import PDFUploader from "./PDFuploader"; // Your upload component
 import ChatBot from "./Chatbot"; // Your chatbot component
 
-export default function InterviewPage() {
+export default function ExamPage() {
   const navigate = useNavigate();
   const [uploaded, setUploaded] = useState(false);
   const [resumeText, setResumeText] = useState("");
@@ -49,14 +49,14 @@ export default function InterviewPage() {
           </motion.div>
 
           <h2 className="text-2xl font-semibold text-gray-800 text-center mb-6">
-            Upload Your Resume for Interview Preparation
+            Upload Your Document For Exam Preparation
           </h2>
 
           {/* PDF Uploader */}
           <PDFUploader
             onExtractedText={(text) => {
               localStorage.setItem("resumeText", text); // Save text for later use
-              navigate("/interview/bot"); // Redirect to interview options page
+              navigate("/exam/bot"); // Redirect to interview options page
             }}
           />
         </motion.div>
