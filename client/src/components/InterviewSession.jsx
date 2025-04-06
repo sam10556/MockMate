@@ -37,7 +37,7 @@ const InterviewSession = () => {
       } catch (error) {
         throw new Error("Failed to parse AI response as JSON.");
       }
-      console.log(questionsData);
+      // console.log(questionsData);
 
       const extractedQuestions = questionsData.map((q) => q.questions);
 

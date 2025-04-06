@@ -70,7 +70,7 @@ app.post("/generate-multiplechoice-questions", async (req, res) => {
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
     const textLength = resumeText.length;
-    const questionCount = textLength < 2500 ? 10 : textLength < 5000 ? 15 : 20;
+    const questionCount = textLength < 2500 ? 5 : textLength < 5000 ? 8 : 10;
 
     const prompt = `
   Analyze the following document and generate ${questionCount} multiple-choice questions based on the key topics.

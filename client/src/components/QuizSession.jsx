@@ -25,7 +25,9 @@ const QuizSession = () => {
     try {
       const response = await axios.post(
         "https://mock-mate-api.vercel.app/generate-multiplechoice-questions",
-        { resumeText }
+        {
+          resumeText,
+        }
       );
 
       if (!response.data || !response.data.questions) {
