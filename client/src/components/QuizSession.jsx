@@ -21,7 +21,6 @@ const QuizSession = () => {
   const generateExamQuestions = async () => {
     setLoading(true);
     setIsStarted(true);
-
     try {
       const response = await axios.post(
         "https://mock-mate-api.vercel.app/generate-multiplechoice-questions",
@@ -30,20 +29,12 @@ const QuizSession = () => {
         }
       );
 
-      if (!response.data || !response.data.questions) {
+      const questionsData = response.data.questions;
+
+      if (!Array.isArray(questionsData)) {
         throw new Error(
-          "Invalid response format: 'questions' field is missing"
+          "Invalid response format: 'questions' should be an array"
         );
-      }
-
-      let rawText = response.data.questions.join("\n");
-      rawText = rawText.replace(/```json|```/g, "").trim();
-
-      let questionsData;
-      try {
-        questionsData = JSON.parse(rawText);
-      } catch (error) {
-        throw new Error("Failed to parse AI response as JSON.");
       }
 
       const extractedQuestions = questionsData.map((q) => ({
