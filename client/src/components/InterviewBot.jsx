@@ -2,21 +2,9 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import axios from "axios";
-import Markdown from "react-markdown";
 
 export default function InterviewBot() {
-  const [mode, setMode] = useState(null);
-  const [questions, setQuestions] = useState([]);
-  const [currentAnswer, setCurrentAnswer] = useState("");
-  const [answers, setAnswers] = useState({});
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [userResponses, setUserResponses] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [feedback, setFeedback] = useState(null);
-  const [resumeAnalysis, setResumeAnalysis] = useState("");
-  const [chatHistory, setChatHistory] = useState([]);
-  const [isFinalSubmitted, setIsFinalSubmitted] = useState(false);
-  const [correctAnswers, setCorrectAnswers] = useState({});
   const navigate = useNavigate();
   const resumeText = localStorage.getItem("resumeText") || "";
 
@@ -41,87 +29,18 @@ export default function InterviewBot() {
     }
   };
 
-  const handleAnswerSubmit = async (index, answer) => {
-    if (!answer.trim() || loading) return; // Prevent empty submissions & multiple requests
-
-    setLoading(true);
-    try {
-      const response = await axios.post(
-        "http://localhost:5000/evaluate-answer",
-        {
-          question: questions[index],
-          answer,
-        }
-      );
-
-      if (!response.data || !response.data.evaluation) {
-        throw new Error("Invalid response format: 'evaluation' field missing");
-      }
-
-      // Store evaluation feedback
-      setAnswers((prev) => ({ ...prev, [index]: response.data.evaluation }));
-
-      // Update chat history
-      const updatedChatHistory = [
-        ...chatHistory,
-        { question: questions[index], answer },
-      ];
-      setChatHistory(updatedChatHistory);
-
-      // Move to the next question or finish
-      if (index < questions.length - 1) {
-        setCurrentQuestionIndex(index + 1);
-        setCurrentAnswer(""); // Clear input for the next question
-      } else {
-        // Ensure the last answer is stored before submitting
-        setTimeout(() => getFinalFeedback(updatedChatHistory), 500);
-      }
-    } catch (error) {
-      console.error(
-        "Error evaluating answer:",
-        error.response?.data || error.message
-      );
-      setAnswers((prev) => ({
-        ...prev,
-        [index]: "Error evaluating answer. Please try again.",
-      }));
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const getFinalFeedback = async (updatedChatHistory) => {
-    setLoading(true);
-    setIsFinalSubmitted(true);
-    try {
-      const response = await axios.post(
-        "http://localhost:5000/final-feedback",
-        {
-          chatHistory: updatedChatHistory, // Ensure latest history is sent
-        }
-      );
-
-      if (!response.data || !response.data.feedback) {
-        throw new Error("Invalid response format: 'feedback' field is missing");
-      }
-
-      if (response.data?.feedback) {
-        navigate("/interview/feedback", {
-          state: {
-            chatHistory: updatedChatHistory,
-            feedback: response.data.feedback,
-          },
-        });
-      }
-    } catch (error) {
-      console.error("Error getting final feedback:", error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-300 to-purple-300 flex flex-col items-center p-6">
+      {loading && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/80 backdrop-blur-sm">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-indigo-500 border-solid mb-4 mx-auto"></div>
+            <p className="text-lg text-gray-700 font-medium">
+              Analyzing your resume...
+            </p>
+          </div>
+        </div>
+      )}
       {/* Header */}
       <motion.header
         initial={{ opacity: 0, y: -20 }}

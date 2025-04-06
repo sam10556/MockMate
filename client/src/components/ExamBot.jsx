@@ -2,75 +2,21 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import axios from "axios";
-import Markdown from "react-markdown";
 
 export default function ExamBot() {
-  const [mode, setMode] = useState(null);
-  const [questions, setQuestions] = useState([]);
-  const [currentAnswer, setCurrentAnswer] = useState("");
-  const [answers, setAnswers] = useState({});
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [userResponses, setUserResponses] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [feedback, setFeedback] = useState(null);
-  const [resumeAnalysis, setResumeAnalysis] = useState("");
-  const [chatHistory, setChatHistory] = useState([]);
-  const [isFinalSubmitted, setIsFinalSubmitted] = useState(false);
-  const [correctAnswers, setCorrectAnswers] = useState({});
   const navigate = useNavigate();
   const resumeText = localStorage.getItem("resumeText") || "";
-
-  const generateExamQuestions = async () => {
-    setLoading(true);
-    try {
-      const response = await axios.post(
-        "https://mock-mate-api.vercel.app/generate-multiplechoice-questions",
-        { resumeText }
-      );
-
-      if (!response.data || !response.data.questions) {
-        throw new Error(
-          "Invalid response format: 'questions' field is missing"
-        );
-      }
-
-      // The response may be wrapped in a code block, so we need to clean it
-      let rawText = response.data.questions.join("\n"); // Convert array back to string
-      rawText = rawText.replace(/```json|```/g, "").trim(); // Remove ```json and ``` markers
-
-      let questionsData;
-      try {
-        questionsData = JSON.parse(rawText); // Parse the cleaned JSON string
-      } catch (error) {
-        throw new Error("Failed to parse AI response as JSON.");
-      }
-
-      const extractedQuestions = questionsData.map((q) => ({
-        question: q.question,
-        options: q.options,
-      }));
-
-      const extractedAnswers = {};
-      questionsData.forEach((q, index) => {
-        extractedAnswers[index] = q.answer;
-      });
-
-      setQuestions(extractedQuestions);
-      setCorrectAnswers(extractedAnswers);
-      setUserResponses(Array(extractedQuestions.length).fill(""));
-    } catch (error) {
-      console.error("Error fetching exam questions:", error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const makesNotes = async () => {
     setLoading(true);
     try {
-      const response = await axios.post("https://mock-mate-api.vercel.app/make-notes", {
-        resumeText,
-      });
+      const response = await axios.post(
+        "https://mock-mate-api.vercel.app/make-notes",
+        {
+          resumeText,
+        }
+      );
       if (response.data?.notes) {
         navigate("/exam/bot/notes", {
           state: {
@@ -87,6 +33,16 @@ export default function ExamBot() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-300 to-purple-300 flex flex-col items-center p-6">
+      {loading && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/80 backdrop-blur-sm">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-indigo-500 border-solid mb-4 mx-auto"></div>
+            <p className="text-lg text-gray-700 font-medium">
+              Analyzing your document...
+            </p>
+          </div>
+        </div>
+      )}
       {/* Header */}
       <motion.header
         initial={{ opacity: 0, y: -20 }}

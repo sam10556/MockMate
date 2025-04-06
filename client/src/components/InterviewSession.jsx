@@ -2,6 +2,8 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import axios from "axios";
 import Markdown from "react-markdown";
+import { Bouncy } from "ldrs/react";
+import "ldrs/react/Bouncy.css";
 
 const InterviewSession = () => {
   const [questions, setQuestions] = useState([]);
@@ -16,6 +18,7 @@ const InterviewSession = () => {
   const resumeText = localStorage.getItem("resumeText") || "";
 
   const generateInterviewQuestion = async () => {
+    setIsStarted(true);
     setLoading(true);
     try {
       const response = await axios.post(
@@ -43,7 +46,6 @@ const InterviewSession = () => {
 
       setQuestions(extractedQuestions);
       setCurrentQuestionIndex(0);
-      setIsStarted(true);
     } catch (error) {
       console.error("Error fetching interview questions:", error.message);
     } finally {
@@ -134,6 +136,13 @@ const InterviewSession = () => {
           >
             Start Interview
           </button>
+        ) : loading ? (
+          <div className="flex items-center justify-center gap-4 p-8 my-12 rounded-2xl">
+            <h1 className="text-2xl font-semibold text-gray-700">
+              Generating Interview Questions
+            </h1>
+            <Bouncy size="60" speed="1.75" color="black" />
+          </div>
         ) : isFinalSubmitted ? (
           <p className="text-lg font-semibold text-green-600">
             Final feedback is being generated...
