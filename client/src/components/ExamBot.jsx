@@ -24,7 +24,7 @@ export default function ExamBot() {
     setLoading(true);
     try {
       const response = await axios.post(
-        "http://localhost:5000/generate-multiplechoice-questions",
+        "https://mock-mate-api.vercel.app/generate-multiplechoice-questions",
         { resumeText }
       );
 
