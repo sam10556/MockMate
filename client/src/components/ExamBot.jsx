@@ -32,73 +32,96 @@ export default function ExamBot() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-300 to-purple-300 flex flex-col items-center p-6">
+    <div className="relative min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-white py-20 px-8 overflow-hidden flex flex-col items-center">
+      {/* Blobs for Aesthetic Background */}
+      <div className="absolute -top-52 -left-40 w-[500px] h-[500px] bg-purple-200 rounded-full mix-blend-multiply blur-3xl opacity-30 animate-pulse"></div>
+      <div className="absolute -bottom-52 -right-40 w-[500px] h-[500px] bg-indigo-200 rounded-full mix-blend-multiply blur-3xl opacity-30 animate-pulse delay-1000"></div>
+
+      {/* Loading Overlay */}
       {loading && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/80 backdrop-blur-sm">
           <div className="text-center">
             <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-indigo-500 border-solid mb-4 mx-auto"></div>
             <p className="text-lg text-gray-700 font-medium">
-              Analyzing your document...
+              Generating your notes...
             </p>
           </div>
         </div>
       )}
+
       {/* Header */}
       <motion.header
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="text-center mt-10 mb-8"
+        transition={{ duration: 0.6 }}
+        className="text-center mb-16 relative z-10"
       >
-        <h1 className="text-4xl md:text-5xl font-extrabold text-indigo-700 tracking-tight">
-          MockMate 🎤
+        <h1 className="text-5xl md:text-6xl font-extrabold text-gray-900">
+          How Would You Like to Prepare for the Exam?
         </h1>
-        <p className="mt-2 text-lg text-gray-600">
-          Ace your next interview or exam with AI-powered practice.
+        <p className="mt-6 text-xl text-gray-600 max-w-3xl mx-auto">
+          Choose between practicing with multiple-choice questions or generating
+          notes from your document.
         </p>
       </motion.header>
-      <div className="w-full max-w-5xl">
+
+      {/* Container for Cards */}
+      <div className="relative z-10 max-w-6xl w-full flex flex-col md:flex-row gap-10">
+        {/* MCQ Exam Card */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.4 }}
-          className="bg-white shadow-2xl rounded-3xl p-8 text-center"
+          whileHover={{ scale: 1.03 }}
+          whileTap={{ scale: 0.98 }}
+          className="flex-1 bg-blue-100 rounded-3xl p-10 shadow-xl hover:shadow-2xl transition cursor-pointer min-h-[280px] flex flex-col justify-between"
         >
-          {/* Back Button */}
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="flex justify-start mb-6"
-          >
-            <button
-              onClick={() => navigate("/exam")}
-              className="flex items-center gap-2 px-4 py-2 border border-gray-500 text-gray-500 font-semibold rounded-lg transition-all hover:bg-gray-500 hover:text-white hover:shadow-md"
-            >
-              Back to Upload
-            </button>
-          </motion.div>
-
-          <h2 className="text-2xl font-semibold text-gray-800 mb-6">
-            Choose Your Exam Practice Mode
-          </h2>
-
-          <div className="flex flex-col md:flex-row justify-center items-center p-10">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-3xl">
-              <button
-                onClick={() => navigate("/exam/bot/start")}
-                className="py-4 px-6 rounded-2xl font-semibold transition-all bg-blue-500 hover:bg-blue-600 text-white shadow-md text-lg"
-              >
-                Take Quiz(MCQ)
-              </button>
-              <button
-                onClick={() => makesNotes()}
-                className="py-4 px-6 rounded-2xl font-semibold transition-all bg-purple-500 hover:bg-purple-600 text-white shadow-md text-lg"
-              >
-                Make notes from the document
-              </button>
-            </div>
+          <div>
+            <h2 className="text-3xl font-semibold text-blue-900 mb-3">
+              📝 Take Exam (MCQ)
+            </h2>
+            <p className="text-lg text-gray-700">
+              Test your knowledge with an AI-powered multiple-choice quiz based
+              on your document.
+            </p>
           </div>
+          <button
+            onClick={() => navigate("/exam/bot/start")}
+            className="mt-6 px-6 py-3 bg-blue-600 text-white text-lg rounded-full hover:bg-blue-700 transition"
+          >
+            Start Exam →
+          </button>
         </motion.div>
+
+        {/* Notes Generation Card */}
+        <motion.div
+          whileHover={{ scale: 1.03 }}
+          whileTap={{ scale: 0.98 }}
+          className="flex-1 bg-purple-100 rounded-3xl p-10 shadow-xl hover:shadow-2xl transition cursor-pointer min-h-[280px] flex flex-col justify-between"
+        >
+          <div>
+            <h2 className="text-3xl font-semibold text-purple-900 mb-3">
+              📄 Generate Notes
+            </h2>
+            <p className="text-lg text-gray-700">
+              Let AI extract key information from your document and create
+              concise notes for you.
+            </p>
+          </div>
+          <button
+            onClick={makesNotes}
+            className="mt-6 px-6 py-3 bg-purple-600 text-white text-lg rounded-full hover:bg-purple-700 transition"
+          >
+            Generate Notes →
+          </button>
+        </motion.div>
+      </div>
+      {/* Back Button Below Cards */}
+      <div className="relative z-10 mt-12">
+        <button
+        onClick={()=>navigate('/selection')}
+          type="button"
+          class="text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+        >
+          Back 
+        </button>
       </div>
     </div>
   );

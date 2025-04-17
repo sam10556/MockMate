@@ -44,7 +44,11 @@ const QuizSession = () => {
 
       const extractedAnswers = {};
       questionsData.forEach((q, index) => {
-        extractedAnswers[index] = q.answer;
+        const answerLetter = q.answer?.toLowerCase(); // like "a"
+        const optionIndex = answerLetter.charCodeAt(0) - 97; // "a" = 0, "b" = 1, etc.
+        const fullAnswer = q.options[optionIndex];
+
+        extractedAnswers[index] = fullAnswer || q.answer; // fallback in case
       });
 
       setQuestions(extractedQuestions);
@@ -62,7 +66,7 @@ const QuizSession = () => {
     const results = questions.map((q, index) => {
       const userAnswer = userResponses[index]?.trim().toLowerCase();
       const correctAnswer = correctAnswers[index]?.trim().toLowerCase();
-      const isCorrect = userAnswer.slice(0, 1) === correctAnswer;
+      const isCorrect = userAnswer.slice(0, 1) === correctAnswer.slice(0, 1);
       if (isCorrect) {
         score++;
       }
@@ -82,32 +86,46 @@ const QuizSession = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-300 to-purple-300 flex flex-col items-center p-6">
-      <div className="w-full max-w-3xl mx-auto p-6 bg-white shadow-lg rounded-xl text-center">
-        <div className="bg-gray-50 rounded-xl p-4 shadow-sm">
-          <h2 className="text-xl font-bold text-gray-800 mb-2">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-300 to-purple-300 flex flex-col items-center py-12 px-6">
+      <div className="w-full max-w-6xl mx-auto p-8 bg-white rounded-xl shadow-xl">
+        {/* Header Section */}
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-bold text-indigo-900 mb-4">
             Exam Questions
           </h2>
+          <p className="text-lg text-indigo-600">
+            Answer the following questions based on your document.
+          </p>
+        </div>
 
-          {loading ? (
-            <div className="flex items-center justify-center gap-4 p-8 my-12 rounded-2xl">
-              <h1 className="text-2xl font-semibold text-gray-700">
-                Generating Questions
-              </h1>
-              <Bouncy size="60" speed="1.75" color="black" />
-            </div>
-          ) : (
-            questions.map((q, index) => (
+        {/* Loading State */}
+        {loading ? (
+          <div className="flex flex-col items-center justify-center gap-6 p-8 my-12 rounded-2xl bg-gray-50 shadow-lg">
+            <h1 className="text-2xl font-semibold text-gray-700">
+              Generating Questions
+            </h1>
+            <Bouncy size="60" speed="1.75" color="black" />
+          </div>
+        ) : (
+          // Question Cards
+          <div>
+            {questions.map((q, index) => (
               <div
                 key={index}
-                className="bg-gray-100 text-left p-3 rounded-lg my-2"
+                className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl p-6 mb-6 shadow-lg hover:shadow-2xl transition-all"
               >
-                <div className="font-semibold flex gap-1">
-                  <p>{index + 1}.</p>
-                  <Markdown>{q.question}</Markdown>
+                <div className="text-left mb-4">
+                  <div className="flex items-start font-semibold text-xl text-indigo-900">
+                    <p className="mr-2">{index + 1}.</p>
+                    <Markdown>{q.question}</Markdown>
+                  </div>
                 </div>
+
                 {q.options.map((option, optIndex) => (
-                  <label key={optIndex} className="block my-1">
+                  <label
+                    key={optIndex}
+                    className="flex items-center space-x-3 cursor-pointer text-lg hover:bg-indigo-100 rounded-lg p-3 mb-2 transition-all"
+                  >
                     <input
                       type="radio"
                       name={`question-${index}`}
@@ -118,22 +136,25 @@ const QuizSession = () => {
                         newResponses[index] = e.target.value;
                         setUserResponses(newResponses);
                       }}
-                      className="mr-2"
+                      className="form-radio h-5 w-5 text-indigo-600"
                     />
-                    {option}
+                    <span className="text-indigo-800">{option}</span>
                   </label>
                 ))}
               </div>
-            ))
-          )}
+            ))}
+          </div>
+        )}
 
+        {/* Submit Button */}
+        <div className="mt-8">
           <button
             onClick={handleSubmit}
             disabled={userResponses.includes("") || loading}
-            className={`mt-4 w-full py-2 px-4 rounded-xl font-semibold text-white ${
+            className={`w-full py-3 rounded-xl font-semibold text-lg text-white ${
               userResponses.includes("")
                 ? "bg-gray-400 cursor-not-allowed"
-                : "bg-green-500 hover:bg-green-600"
+                : "bg-gradient-to-br from-green-400 to-teal-400 hover:bg-gradient-to-br hover:from-green-500 hover:to-teal-500"
             }`}
           >
             Submit Exam

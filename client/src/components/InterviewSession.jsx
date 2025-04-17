@@ -40,7 +40,6 @@ const InterviewSession = () => {
       } catch (error) {
         throw new Error("Failed to parse AI response as JSON.");
       }
-      // console.log(questionsData);
 
       const extractedQuestions = questionsData.map((q) => q.questions);
 
@@ -55,8 +54,6 @@ const InterviewSession = () => {
 
   const handleAnswerSubmit = async () => {
     if (!currentAnswer.trim() || loading) return;
-
-    setLoading(true);
     try {
       const response = await axios.post(
         "https://mock-mate-api.vercel.app/evaluate-answer",
@@ -99,7 +96,6 @@ const InterviewSession = () => {
   };
 
   const getFinalFeedback = async (updatedChatHistory) => {
-    setLoading(true);
     setIsFinalSubmitted(true);
     try {
       const response = await axios.post(
@@ -127,12 +123,38 @@ const InterviewSession = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-300 to-purple-300 flex flex-col items-center p-6">
-      <div className="w-full max-w-3xl mx-auto p-6 bg-white shadow-lg rounded-xl text-center">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-100 to-purple-200 flex flex-col items-center p-6 relative">
+      {/* Background Image */}
+      <div
+        className="absolute inset-0 bg-cover bg-center"
+        style={{ backgroundImage: "url('/images/interview-background.jpg')" }}
+      />
+
+      {/* Interview Card */}
+      <div className="relative z-10 w-full max-w-4xl mx-auto p-12 bg-white rounded-3xl shadow-lg text-center space-y-6">
+        {/* Illustration or Text above Start Button */}
+        {!isStarted && (
+          <div className="flex flex-col items-center space-y-6 mb-8">
+            <img
+              src="/illustration1.svg"
+              alt="Interview Illustration"
+              className="w-40 h-40 mb-6"
+            />
+            <h2 className="text-3xl font-semibold text-gray-800">
+              Ready for your mock interview? Let's get started!
+            </h2>
+            <p className="text-lg text-gray-600">
+              Get personalized interview questions based on your resume and
+              practice your answers.
+            </p>
+          </div>
+        )}
+
+        {/* Start Button */}
         {!isStarted ? (
           <button
             onClick={generateInterviewQuestion}
-            className="px-6 py-3 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 transition"
+            className="px-8 py-4 bg-blue-500 text-white font-semibold rounded-xl hover:bg-blue-600 transition-all mt-8 text-lg"
           >
             Start Interview
           </button>
@@ -149,14 +171,24 @@ const InterviewSession = () => {
           </p>
         ) : (
           <div>
-            <h2 className="text-xl font-bold mb-4">
-              Question {currentQuestionIndex + 1}
-            </h2>
-            <Markdown>{questions[currentQuestionIndex]}</Markdown>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-semibold text-gray-800">
+                Question {currentQuestionIndex + 1}
+              </h2>
+              <img
+                src="/illustration1.svg"
+                alt="Interview Icon"
+                className="w-16 h-16"
+              />
+            </div>
+
+            <div className="bg-gray-50 p-6 rounded-2xl shadow-md mb-8 text-left text-lg text-gray-800 font-semibold">
+              <Markdown>{questions[currentQuestionIndex]}</Markdown>
+            </div>
 
             <textarea
               placeholder="Type your response..."
-              className="w-full border border-gray-300 rounded-lg p-4 mt-4 text-lg min-h-[120px]"
+              className="w-full border border-gray-300 rounded-lg p-6 mt-4 text-lg min-h-[160px] bg-white shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               value={currentAnswer}
               onChange={(e) => setCurrentAnswer(e.target.value)}
               disabled={loading}
@@ -165,7 +197,7 @@ const InterviewSession = () => {
             <button
               onClick={handleAnswerSubmit}
               disabled={!currentAnswer.trim() || loading}
-              className={`mt-4 w-full py-3 px-4 rounded-lg font-semibold text-lg ${
+              className={`mt-6 w-full py-4 px-6 rounded-lg font-semibold text-lg ${
                 loading
                   ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                   : "bg-blue-500 hover:bg-blue-600 text-white"
