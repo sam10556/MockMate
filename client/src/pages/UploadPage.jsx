@@ -1,10 +1,15 @@
-import { useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowLeftCircleIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import PDFUploader from "./PDFuploader"; // Custom upload component
+import PDFUploader from "../components/PDFuploader"; // Assumed shared uploader
 
-export default function ExamPage() {
+export default function UploadPage({
+  title,
+  subtitle,
+  backPath,
+  onExtractedText,
+  localStorageKey,
+}) {
   const navigate = useNavigate();
 
   return (
@@ -21,11 +26,10 @@ export default function ExamPage() {
         className="text-center mb-14 relative z-10"
       >
         <h1 className="text-4xl md:text-5xl font-extrabold text-gray-800">
-          Exam Preparation with AI
+          {title}
         </h1>
         <p className="mt-4 text-lg text-gray-600 max-w-xl mx-auto">
-          Upload your study materials and let AI simulate an exam prep
-          experience.
+          {subtitle}
         </p>
       </motion.header>
 
@@ -43,7 +47,7 @@ export default function ExamPage() {
             className="flex justify-start mb-6"
           >
             <button
-              onClick={() => navigate("/")}
+              onClick={() => navigate(backPath)}
               className="flex items-center gap-2 px-4 py-2 border border-gray-400 text-gray-600 font-medium rounded-lg hover:bg-gray-200 transition-all"
             >
               <ArrowLeftCircleIcon className="w-5 h-5" />
@@ -53,22 +57,21 @@ export default function ExamPage() {
 
           {/* Title */}
           <h2 className="text-2xl font-semibold text-gray-800 text-center mb-6">
-            Upload your study material below
+            Upload your file below
           </h2>
 
-          {/* PDF Upload Component */}
+          {/* PDF Upload */}
           <PDFUploader
             onExtractedText={(text) => {
-              localStorage.setItem("examText", text);
-              navigate("/exam/bot");
+              localStorage.setItem(localStorageKey, text);
+              navigate(onExtractedText);
             }}
           />
 
-          {/* Mini tips / assurance */}
+          {/* Info */}
           <div className="mt-6 text-sm text-center text-gray-500">
             <p>
-              ✨ We do not store your materials. Your data stays in your
-              browser.
+              ✨ We do not store your file. Your data stays in your browser.
             </p>
           </div>
         </motion.div>

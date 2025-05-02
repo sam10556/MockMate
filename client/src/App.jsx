@@ -1,9 +1,9 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Home from "./components/Home";
+import Home from "./pages/Home";
 import Feedback from "./components/Feedback";
-import InterviewPage from "./components/InterviewPage";
-import ExamPage from "./components/ExamPage";
-import Selection from "./components/Selection";
+import InterviewPage from "./pages/InterviewPage";
+import ExamPage from "./pages/ExamPage";
+import Selection from "./pages/Selection";
 import InterviewBot from "./components/InterviewBot";
 import AnalyzeResume from "./components/AnalyzeResume";
 import InterviewSession from "./components/InterviewSession";

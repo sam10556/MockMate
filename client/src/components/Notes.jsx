@@ -1,6 +1,7 @@
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Markdown from "react-markdown";
+import { motion } from "framer-motion";
 
 const Notes = () => {
   const location = useLocation();
@@ -8,34 +9,53 @@ const Notes = () => {
   const { notes } = location.state || {};
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-200 to-purple-300 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="w-full max-w-5xl bg-white shadow-2xl rounded-3xl p-10 space-y-6 relative">
-        {/* Title */}
-        <div className="text-center">
-          <h2 className="text-4xl font-extrabold text-indigo-800">
-            📘 Important Notes
-          </h2>
-          <p className="mt-2 text-lg text-gray-600">
-            Based on your uploaded document
-          </p>
-        </div>
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white px-6 py-16 md:py-24 relative overflow-hidden flex items-center justify-center">
+      {/* Background Blobs */}
+      <div className="absolute -top-40 -left-40 w-[500px] h-[500px] bg-purple-300 opacity-30 rounded-full blur-3xl mix-blend-multiply animate-pulse" />
+      <div className="absolute -bottom-40 -right-40 w-[500px] h-[500px] bg-indigo-300 opacity-30 rounded-full blur-3xl mix-blend-multiply animate-pulse delay-1000" />
 
-        {/* Notes Content */}
-        <div className="max-h-[500px] overflow-y-auto p-6 bg-gray-50 rounded-xl shadow-inner border border-indigo-100">
-          <Markdown>
-            {notes}
-          </Markdown>
-        </div>
+      <div className="relative z-10 max-w-5xl w-full">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-10"
+        >
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+            📘 Important Notes
+          </h1>
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            These are the AI-generated notes based on your uploaded document.
+          </p>
+        </motion.div>
+
+        {/* Notes Container */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.4, duration: 0.6 }}
+          className="bg-white p-8 md:p-10 rounded-3xl shadow-2xl border border-gray-100 max-h-[500px] overflow-y-auto"
+        >
+          <div className="prose prose-indigo prose-lg max-w-none text-gray-700">
+            <Markdown>{notes}</Markdown>
+          </div>
+        </motion.div>
 
         {/* Back Button */}
-        <div className="text-center">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.6, duration: 0.6 }}
+          className="flex justify-center mt-10"
+        >
           <button
             onClick={() => navigate("/exam/bot")}
-            className="inline-block px-8 py-3 bg-indigo-600 text-white font-semibold rounded-xl shadow-md hover:bg-indigo-700 hover:scale-105 transition duration-200 ease-in-out"
+            className="px-6 py-3 bg-indigo-600 text-white font-semibold text-lg rounded-full shadow-md hover:bg-indigo-700 transition-all"
           >
-            Back to Exam
+            ← Back to Exam Options
           </button>
-        </div>
+        </motion.div>
       </div>
     </div>
   );
