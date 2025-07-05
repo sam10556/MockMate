@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 const HeroSection = () => {
   return (
-    <section className="relative py-24 md:py-32 px-6 bg-gradient-to-b from-white to-blue-50 overflow-hidden">
+    <section className="relative py-24 md:py-32 px-6 bg-gradient-to-b from-white to-blue-200 overflow-hidden">
       {/* Background elements */}
       <div className="absolute inset-0 z-0 overflow-hidden">
         <div className="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-blue-100 opacity-50 blur-3xl"></div>
